@@ -1,0 +1,22 @@
+{
+  "name": "school-management-playwright",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test tests/web",
+    "test:api": "playwright test tests/api",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.1",
+    "@types/node": "^22.19.0",
+    "typescript": "^5.9.3",
+    "dotenv": "^16.6.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

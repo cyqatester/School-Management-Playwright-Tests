@@ -1,0 +1,92 @@
+name: Playwright CI/CD Tests
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: 'Deployed application URL to test (for example, https://example.com/school-management-system/)'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate Playwright TypeScript project
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: TypeScript check
+        run: npx tsc --noEmit
+
+  e2e:
+    name: Run Playwright web and API tests
+    needs: validate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      BASE_URL: ${{ inputs.base_url || secrets.BASE_URL }}
+      E2E_USERNAME: ${{ secrets.E2E_USERNAME }}
+      E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Install Playwright Chromium
+        if: ${{ env.BASE_URL != '' }}
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright tests
+        if: ${{ env.BASE_URL != '' }}
+        run: npm test
+
+      - name: Explain skipped end-to-end tests
+        if: ${{ env.BASE_URL == '' }}
+        run: |
+          echo "BASE_URL was not supplied."
+          echo "TypeScript validation completed, but browser/API tests were skipped."
+          echo "Add the BASE_URL repository secret or run this workflow manually with base_url."
+
+      - name: Upload Playwright HTML report
+        if: ${{ always() && env.BASE_URL != '' }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: playwright-html-report
+          path: playwright-report/
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Upload Playwright test results
+        if: ${{ always() && env.BASE_URL != '' }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: playwright-test-results
+          path: test-results/
+          if-no-files-found: warn
+          retention-days: 7
