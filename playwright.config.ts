@@ -61,7 +61,7 @@ export default defineConfig({
     actionTimeout: 10_000,
     navigationTimeout: 15_000,
 
-    headless: true
+    headless: true //set to true before committing changes
   },
 
   projects: [
