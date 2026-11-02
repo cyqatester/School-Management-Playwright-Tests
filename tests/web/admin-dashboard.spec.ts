@@ -11,5 +11,10 @@ test.describe('Web - Admin Dashboard', () => {
         await adminDashBoardPage.expectMyProfileAdminHeaderVisible();
         await adminDashBoardPage.expectManageAccountsHeaderVisible();
         await adminDashBoardPage.expectCreateAccountHeaderVisible();
+        await adminDashBoardPage.expectAdminsButtonVisible();
+        await adminDashBoardPage.expectTeachersButtonVisible();
+        await adminDashBoardPage.expectStudentsButtonVisible();
+        await adminDashBoardPage.expectSaveProfileButtonVisible();
+        await adminDashBoardPage.expectCreateButtonVisible();
     });
 });
