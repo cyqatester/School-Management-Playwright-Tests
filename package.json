@@ -6,6 +6,9 @@
     "test": "playwright test",
     "test:ui": "playwright test tests/web",
     "test:api": "playwright test tests/api",
+    "test:dev": "cross-env TEST_ENV=dev playwright test",
+    "test:qa": "cross-env TEST_ENV=qa playwright test",
+    "test:prod": "cross-env TEST_ENV=prod playwright test",
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",
     "report": "playwright show-report"
@@ -13,8 +16,9 @@
   "devDependencies": {
     "@playwright/test": "^1.56.1",
     "@types/node": "^22.19.0",
-    "typescript": "^5.9.3",
-    "dotenv": "^16.6.1"
+    "cross-env": "^10.1.0",
+    "dotenv": "^16.6.1",
+    "typescript": "^5.9.3"
   },
   "engines": {
     "node": ">=20"

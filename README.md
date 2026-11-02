@@ -51,6 +51,8 @@ Set credentials for a dedicated test account in `.env`:
 ```dotenv
 E2E_USERNAME=your_test_user
 E2E_PASSWORD=your_test_password
+
+Create 3 .env files (.env.dev, .env.qa, .env.prod)
 ```
 
 The default selectors are:
@@ -88,7 +90,12 @@ HTML report:
 ```bash
 npm run report
 ```
-
+Test 3 different environments, if neccessary (dev, qa, prod):
+```bash
+npm run test:dev
+npm run test:qa
+npm run test:prod
+```
 ## Project structure
 
 ```text
