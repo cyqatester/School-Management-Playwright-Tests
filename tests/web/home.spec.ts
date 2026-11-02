@@ -1,8 +1,6 @@
-import { test, expect } from '@playwright/test';
+import { test } from '../../fixtures/test-fixtures';
 
-test('application base page responds', async ({ page }) => {
-  const response = await page.goto('./');
-  expect(response, 'Expected an HTTP response from the application').not.toBeNull();
-  expect(response!.status()).toBeLessThan(500);
-  await expect(page.locator('body')).not.toBeEmpty();
+test('application base page responds', async ({ homePage }) => {
+  await homePage.open();
 });
+

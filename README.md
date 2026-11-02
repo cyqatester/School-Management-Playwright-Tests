@@ -1,105 +1,95 @@
-# School Management System - Playwright Tests
+# School Management System – Playwright Test Automation
 
-Playwright + TypeScript project for browser UI and HTTP API testing.
+## 1. Name and Short Description of the Project
 
-## Included tests
+**School Management System – Playwright Test Automation** is an automated testing project for the School Management System web application.
 
-### Web
-- Application base page responds.
-- Login page displays username and password fields.
-- Optional valid-login test when dedicated E2E credentials are configured.
+Built with Playwright and TypeScript, it provides browser-based UI tests and HTTP API tests. The web tests follow the **Page Object Model (POM)** design pattern: page locators and reusable page actions are maintained separately from test scenarios. API operations are centralized in a reusable API client.
 
-### API
-- Unauthenticated `GET api/me` is expected to return HTTP `302`.
-- The `Location` response header is expected to contain `/login`.
-- Application root is reachable over HTTP.
+The project supports Development, QA, and Production test environments through separate environment configuration files.
 
-The `/api/me` behavior is based on the existing Spring Security integration-test contract. Other authenticated API routes and payloads have not been provided, so this starter does not invent them.
+## 2. Technologies
 
-## Requirements
+- **Playwright Test** – browser automation, assertions, API request testing, and test reporting.
+- **TypeScript** – typed test code and page-object classes.
+- **Node.js and npm** – JavaScript runtime and dependency management.
+- **dotenv** – loads environment-specific variables.
+- **cross-env** – sets the selected test environment consistently across operating systems.
+- **GitHub Actions** – automated TypeScript validation and Playwright test workflow.
+- **Chromium** – browser used by the configured Playwright project.
 
-- Node.js 20+
-- npm
-- School Management System running locally or deployed to Tomcat
+## 3. Features
 
-## Install
+### Web UI Testing
 
-```bash
-npm install
-npx playwright install chromium
-```
+- Verify that the application base page responds.
+- Verify that the login page loads.
+- Verify that the username, password, and submit controls are visible.
+- Optionally verify a successful login when test credentials are configured.
 
-## Configure the target URL
+### API Testing
 
-Copy `.env.example` to `.env`.
+- Verify that the application root is reachable over HTTP.
+- Verify the existing unauthenticated `GET api/me` behavior: HTTP `302` redirect to a location containing `/login`.
 
-Spring Boot direct:
-```dotenv
-BASE_URL=http://localhost:8080/
-```
+### Page Object Model
 
-Tomcat 11 WAR deployment:
-```dotenv
-BASE_URL=http://localhost:8080/school-management-system/
-```
+- `BasePage` provides shared browser-page functionality.
+- `HomePage` and `LoginPage` contain page-specific locators and actions.
+- Playwright fixtures initialize page objects for web tests.
+- `SchoolManagementApi` centralizes the HTTP API operations used by API tests.
 
-Keep the trailing slash; test paths are relative to this base URL.
+### Environment Configuration
 
-## Optional login test
+- Separate `.env.dev`, `.env.qa`, and `.env.prod` files.
+- Select an environment using `TEST_ENV`.
+- Configure the application URL, test credentials, login path, and login selectors through environment variables.
 
-Set credentials for a dedicated test account in `.env`:
-```dotenv
-E2E_USERNAME=your_test_user
-E2E_PASSWORD=your_test_password
+### Test Reports and Diagnostics
 
-Create 3 .env files (.env.dev, .env.qa, .env.prod)
-```
+- List reporter in the terminal.
+- HTML report.
+- JUnit XML report.
+- Trace, screenshot, and video retained on test failure.
 
-The default selectors are:
-```dotenv
-LOGIN_USERNAME_SELECTOR=input[name="username"]
-LOGIN_PASSWORD_SELECTOR=input[name="password"]
-LOGIN_SUBMIT_SELECTOR=button[type="submit"]
-```
+### GitHub Actions
 
-Change these selectors to match the actual login page HTML. Do not commit `.env` or real credentials.
+- Runs on pushes and pull requests targeting `main`, `master`, or `develop`.
+- Supports manual execution through `workflow_dispatch`.
+- Validates TypeScript.
+- Runs web and API tests when a test application `BASE_URL` is supplied.
+- Uploads Playwright HTML reports and test results as workflow artifacts.
 
-## Run
+## 4. The Process
 
-All tests:
-```bash
-npm test
-```
+The project uses the following test execution flow:
 
-Web only:
-```bash
-npm run test:ui
-```
+1. **Select the environment** – choose `dev`, `qa`, or `prod` using `TEST_ENV`.
+2. **Load configuration** – `support/env.ts` loads the corresponding `.env` file and makes the URL, credentials, and login settings available to the tests. Variables already supplied by the process or CI environment take precedence over values in the file.
+3. **Initialize test fixtures** – web fixtures create the required page objects; API fixtures create the reusable API client.
+4. **Execute web tests** – test scenarios call page-object methods rather than duplicating page locators and interactions in each test.
+5. **Execute API tests** – API scenarios use `SchoolManagementApi` to send HTTP requests and assert the responses.
+6. **Collect results** – Playwright produces terminal output, an HTML report, JUnit XML, and failure diagnostics.
+7. **Run through GitHub Actions** – the workflow validates the project and, when `BASE_URL` is configured, runs the browser and API tests against the supplied deployment.
 
-API only:
-```bash
-npm run test:api
-```
-
-Visible browser:
-```bash
-npm run test:headed
-```
-
-HTML report:
-```bash
-npm run report
-```
-Test 3 different environments, if neccessary (dev, qa, prod):
-```bash
-npm run test:dev
-npm run test:qa
-npm run test:prod
-```
-## Project structure
+### Project Structure
 
 ```text
-school-management-playwright/
+School-Management-Playwright-POM/
+├── .github/
+│   └── workflows/
+│       └── playwright.yml
+├── api/
+│   └── SchoolManagementApi.ts
+├── fixtures/
+│   ├── api-fixtures.ts
+│   └── test-fixtures.ts
+├── pages/
+│   ├── BasePage.ts
+│   ├── HomePage.ts
+│   └── LoginPage.ts
+├── support/
+│   └── env.ts
 ├── tests/
 │   ├── api/
 │   │   ├── auth.spec.ts
@@ -107,78 +97,114 @@ school-management-playwright/
 │   └── web/
 │       ├── home.spec.ts
 │       └── login.spec.ts
-├── support/
-│   └── env.ts
+├── screenshots/
+│   └── (add application screenshots here)
 ├── .env.example
 ├── .gitignore
 ├── package.json
+├── package-lock.json
 ├── playwright.config.ts
 └── tsconfig.json
 ```
 
-## Reports
+## 5. Running the Project
 
-- HTML: `playwright-report/`
-- JUnit XML: `test-results/junit.xml`
-- Failure screenshots, traces and videos: `test-results/`
+### Prerequisites
 
-## Jenkins
+- Node.js 20 or later.
+- npm.
+- The School Management System application running at the target URL.
+- Chromium installed through Playwright.
 
-Run after Jenkins has deployed the WAR and confirmed the app is ready.
+### Install Dependencies
 
-Windows agent:
-```bat
-npm ci
-npx playwright install chromium
-npm test
-```
+From the project root, run:
 
-Linux agent:
 ```bash
 npm ci
-npx playwright install --with-deps chromium
-npm test
+npx playwright install chromium
 ```
 
-Set `BASE_URL` in Jenkins to the deployed Tomcat URL.
+### Configure the Environment
 
-## Expanding coverage
+Create the environment files in the project root:
 
-To build reliable role-specific and authenticated API tests, use the application's actual routes, form selectors, and API request/response contracts. Planned coverage:
-- Student: view/edit own profile; view assigned teachers.
-- Teacher: list/create/update/delete assigned students.
-- Admin: user CRUD; assign multiple teachers; prevent deletion of original `superadmin`.
-- API: authenticated access, role authorization, validation, and CRUD responses.
+- `.env.dev`
+- `.env.qa`
+- `.env.prod`
 
+Use `.env.example` as a template. For example, `.env.dev` can contain:
 
-## GitHub Actions CI and post-deployment testing
+```dotenv
+BASE_URL=http://localhost:8080/school-management-system/
+E2E_USERNAME=your_test_username
+E2E_PASSWORD=your_test_password
+LOGIN_PATH=login
+LOGIN_USERNAME_SELECTOR=input[name="username"]
+LOGIN_PASSWORD_SELECTOR=input[name="password"]
+LOGIN_SUBMIT_SELECTOR=button[type="submit"]
+```
 
-The workflow at `.github/workflows/playwright.yml`:
+Set the values and selectors to match the actual application. The configured default base URL is `http://localhost:8080/school-management-system/`.
 
-1. Runs on pushes and pull requests to `main`, `master`, and `develop`.
-2. Installs Node.js dependencies and checks TypeScript.
-3. Runs browser and API tests when a target application URL is configured.
-4. Can also be started manually from **GitHub → Actions → Playwright CI/CD Tests → Run workflow**, with a deployed `base_url`.
-5. Uploads HTML reports and test results for 7 days.
+Do not commit `.env.dev`, `.env.qa`, `.env.prod`, or real credentials. The `.gitignore` file excludes environment files. Use GitHub Actions repository secrets or environment secrets for CI credentials.
 
-### Configure GitHub Actions secrets
+### Run Tests Locally
 
-In the Playwright repository, open **Settings → Secrets and variables → Actions → New repository secret** and add:
+**Development**
 
-- `BASE_URL`: URL reachable from the GitHub-hosted runner, e.g. `https://your-host/school-management-system/`.
-- `E2E_USERNAME`: optional dedicated test account username.
-- `E2E_PASSWORD`: optional dedicated test account password.
+```bash
+npm run test:dev
+```
 
-Do not use production administrator credentials in automated tests.
+**QA**
 
-If `BASE_URL` is not set, GitHub Actions still validates the TypeScript project, but skips live browser/API tests. You can provide `base_url` when manually starting the workflow.
+```bash
+npm run test:qa
+```
 
-### How this fits the deployment pipeline
+**Production**
 
-For the current setup, GitHub Actions builds/tests the Java WAR and publishes it as an artifact; Jenkins retrieves that artifact and deploys it to the local Tomcat 11 server. This Playwright workflow is intended to run after deployment and test the deployed application.
+```bash
+npm run test:prod
+```
 
-A GitHub-hosted runner cannot access `localhost` on your personal Windows computer. To run the post-deployment tests against your local Tomcat, either:
-- use a Jenkins agent on the same machine/network and run `npm test` after deployment; or
-- use a GitHub Actions self-hosted runner on the Windows machine, then configure this workflow to use that runner.
+Additional commands:
 
-For a public/staging deployment reachable over HTTPS, the GitHub-hosted runner can run the tests using the `BASE_URL` secret.
+```bash
+# All tests (Development by default)
+npm test
+
+# Web UI tests
+npm run test:ui
+
+# API tests (Development by default)
+npm run test:api
+
+# Run with a visible browser
+npm run test:headed
+
+# Debug tests
+npm run test:debug
+
+# Open the HTML report
+npm run report
+
+# TypeScript validation
+npx tsc --noEmit
+```
+
+### Run Tests with GitHub Actions
+
+The workflow is located at `.github/workflows/playwright.yml`.
+
+It runs automatically for pushes and pull requests to `main`, `master`, and `develop`. It can also be started manually from **GitHub → Actions → Playwright CI/CD Tests → Run workflow**.
+
+For browser and API tests to execute in GitHub Actions, provide a reachable application URL:
+
+- Add a repository or environment secret named `BASE_URL`, or
+- Start the workflow manually and enter the `base_url` input.
+
+Add `E2E_USERNAME` and `E2E_PASSWORD` as GitHub secrets if the optional authenticated login test should run.
+
+**Important:** A GitHub-hosted runner cannot access `localhost` on your personal computer. Use a publicly reachable test/staging deployment or a suitable self-hosted GitHub Actions runner to test an application running only on your local machine. Use dedicated test accounts and avoid destructive tests against Production.
