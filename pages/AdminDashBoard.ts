@@ -11,7 +11,6 @@ export class AdminDashBoard extends BasePage {
     readonly adminsButton: Locator;
     readonly teachersButton: Locator;
     readonly studentsButton: Locator;
-    readonly saveProfileButton: Locator;
     readonly createButton: Locator;
 
     constructor(page: Page) {
@@ -24,13 +23,12 @@ export class AdminDashBoard extends BasePage {
         this.adminsButton = page.getByRole('button', { name: 'Admins' });
         this.teachersButton = page.getByRole('button', { name: 'Teachers' });
         this.studentsButton = page.getByRole('button', { name: 'Students' });
-        this.saveProfileButton = page.getByRole('button', { name: 'Save profile' });
         this.createButton = page.getByRole('button', { name: 'Create' });
     }
 
-    async open(): Promise<void> {
-        await this.goto(env.loginPath);
-    }
+    // async open(): Promise<void> {
+    //     await this.goto(env.loginPath);
+    // }
 
     async expectAdminHeaderVisible(): Promise<void> {
         await expect(this.administrationHeader).toBeVisible();
@@ -64,18 +62,7 @@ export class AdminDashBoard extends BasePage {
         await expect(this.studentsButton).toBeVisible();
     }
 
-    async expectSaveProfileButtonVisible(): Promise<void> {
-        await expect(this.saveProfileButton).toBeVisible();
-    }
-
     async expectCreateButtonVisible(): Promise<void> {
         await expect(this.createButton).toBeVisible();
-    }
-
-    async expectSignedIn(): Promise<void> {
-        await expect(this.page).not.toHaveURL(/\/login(?:\?|$)/);
-        if (env.expectedAfterLogin) {
-            await expect(this.page).toHaveURL(new RegExp(env.expectedAfterLogin));
-        }
     }
 }
