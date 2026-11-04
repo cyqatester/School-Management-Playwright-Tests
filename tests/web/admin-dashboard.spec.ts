@@ -1,5 +1,6 @@
 import { test, expect } from '../../fixtures/test-fixtures';
 import { env, hasTestCredentials } from '../../support/env';
+import { ROLES } from '../../constants/roles';
 
 test.describe('Web - Admin Dashboard', () => {
     test('Web - Admin Dashboard loads and displays expected elements', async ({ loginPage, adminDashBoardPage, dashBoardPage }) => {
@@ -25,5 +26,20 @@ test.describe('Web - Admin Dashboard', () => {
         await adminDashBoardPage.expectTeachersButtonVisible();
         await adminDashBoardPage.expectStudentsButtonVisible();
         await adminDashBoardPage.expectCreateButtonVisible();
+    });
+
+    test('Web - Admin user adds new admin', async ({ loginPage, adminDashBoardPage }) => {
+        await loginPage.open();
+        await loginPage.signIn(env.username!, env.password!);
+        await loginPage.expectSignedIn();
+
+        //Create Account Section
+        await adminDashBoardPage.expectCreateAccountHeaderVisible();
+        await adminDashBoardPage.expectFirstNameCreateAccountLabelVisible();
+        await adminDashBoardPage.expectCreateButtonVisible();
+
+        //Inputs in Create Account Section
+        await adminDashBoardPage.createAccountForm('Admin', 'One', 'Admin1', 'admin1234', ROLES.ADMIN);
+        await adminDashBoardPage.expectAdminUserExistsInManageAccounts('Admin1', 'Admin One');
     });
 });

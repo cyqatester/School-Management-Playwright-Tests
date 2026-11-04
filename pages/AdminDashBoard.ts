@@ -1,6 +1,6 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 import { BasePage } from './BasePage';
-import { env } from '../support/env';
+import { FORM_ACTION_URLS } from '../constants/form-action-urls';
 
 export class AdminDashBoard extends BasePage {
     readonly administrationHeader: Locator;
@@ -12,6 +12,12 @@ export class AdminDashBoard extends BasePage {
     readonly teachersButton: Locator;
     readonly studentsButton: Locator;
     readonly createButton: Locator;
+    readonly firstNameCreateAccountLabel: Locator;
+    readonly lastNameCreateAccountLabel: Locator;
+    readonly usernameCreateAccountLabel: Locator;
+    readonly newPasswordCreateAccountLabel: Locator;
+    readonly roleCreateAccountSelectOption: Locator;
+    readonly adminRowManageAccount: Locator;
 
     constructor(page: Page) {
         super(page);
@@ -24,11 +30,13 @@ export class AdminDashBoard extends BasePage {
         this.teachersButton = page.getByRole('button', { name: 'Teachers' });
         this.studentsButton = page.getByRole('button', { name: 'Students' });
         this.createButton = page.getByRole('button', { name: 'Create' });
+        this.firstNameCreateAccountLabel = page.locator(FORM_ACTION_URLS.CREATE_ACCOUNT).locator('label').filter({ hasText: 'First name' });
+        this.lastNameCreateAccountLabel = page.locator(FORM_ACTION_URLS.CREATE_ACCOUNT).locator('label').filter({ hasText: 'Last name' });
+        this.usernameCreateAccountLabel = page.locator(FORM_ACTION_URLS.CREATE_ACCOUNT).locator('label').filter({ hasText: 'Username' });
+        this.newPasswordCreateAccountLabel = page.locator(FORM_ACTION_URLS.CREATE_ACCOUNT).locator('label').filter({ hasText: 'Password' });
+        this.roleCreateAccountSelectOption = page.locator('#role');
+        this.adminRowManageAccount = page.locator('#admins tr');
     }
-
-    // async open(): Promise<void> {
-    //     await this.goto(env.loginPath);
-    // }
 
     async expectAdminHeaderVisible(): Promise<void> {
         await expect(this.administrationHeader).toBeVisible();
@@ -64,5 +72,24 @@ export class AdminDashBoard extends BasePage {
 
     async expectCreateButtonVisible(): Promise<void> {
         await expect(this.createButton).toBeVisible();
+    }
+
+    async expectFirstNameCreateAccountLabelVisible(): Promise<void> {
+        await expect(this.firstNameCreateAccountLabel).toBeVisible();
+    }
+
+    async createAccountForm(firstName: string, lastName: string, username: string, newPassword: string, role: string): Promise<void> {
+        await this.firstNameCreateAccountLabel.fill(firstName);
+        await this.lastNameCreateAccountLabel.fill(lastName);
+        await this.usernameCreateAccountLabel.fill(username);
+        await this.newPasswordCreateAccountLabel.fill(newPassword);
+        await this.roleCreateAccountSelectOption.selectOption(role);
+        await this.createButton.click();
+    }
+
+    async expectAdminUserExistsInManageAccounts(username: string, name: string): Promise<void> {
+        const adminUserRow = this.adminRowManageAccount.filter({ hasText: username });
+        await expect(adminUserRow).toBeVisible();
+        await expect(adminUserRow).toContainText(name);
     }
 }

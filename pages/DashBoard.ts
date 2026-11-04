@@ -1,6 +1,7 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 import { BasePage } from './BasePage';
 import { env } from '../support/env';
+import { FORM_ACTION_URLS } from '../constants/form-action-urls';
 
 export class DashBoard extends BasePage {
     readonly myDashboardHeader: Locator;
@@ -14,18 +15,10 @@ export class DashBoard extends BasePage {
         super(page);
         this.myDashboardHeader = page.getByRole('heading', { name: 'My dashboard', exact: true });
         this.saveProfileButton = page.getByRole('button', { name: 'Save profile' });
-        this.firstNameProfileLabel = page.locator('form[action="/school-management-system/profile"]')
-                                         .locator('label')
-                                         .filter({ hasText: 'First name' });
-        this.lastNameProfileLabel = page.locator('form[action="/school-management-system/profile"]')
-                                         .locator('label')
-                                         .filter({ hasText: 'Last name' });
-        this.usernameProfileLabel = page.locator('form[action="/school-management-system/profile"]')
-                                         .locator('label')
-                                         .filter({ hasText: 'Username' });
-        this.newPasswordProfileLabel = page.locator('form[action="/school-management-system/profile"]')
-                                         .locator('label')
-                                         .filter({ hasText: 'New password' });
+        this.firstNameProfileLabel = page.locator(FORM_ACTION_URLS.PROFILE).locator('label').filter({ hasText: 'First name' });
+        this.lastNameProfileLabel = page.locator(FORM_ACTION_URLS.PROFILE).locator('label').filter({ hasText: 'Last name' });
+        this.usernameProfileLabel = page.locator(FORM_ACTION_URLS.PROFILE).locator('label').filter({ hasText: 'Username' });
+        this.newPasswordProfileLabel = page.locator(FORM_ACTION_URLS.PROFILE).locator('label').filter({ hasText: 'New password' });
     }
 
     async open(): Promise<void> {
