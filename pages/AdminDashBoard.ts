@@ -15,7 +15,7 @@ export class AdminDashBoard extends BasePage {
     readonly firstNameCreateAccountLabel: Locator;
     readonly lastNameCreateAccountLabel: Locator;
     readonly usernameCreateAccountLabel: Locator;
-    readonly newPasswordCreateAccountLabel: Locator;
+    readonly passwordCreateAccountLabel: Locator;
     readonly roleCreateAccountSelectOption: Locator;
     readonly adminRowManageAccount: Locator;
 
@@ -33,7 +33,7 @@ export class AdminDashBoard extends BasePage {
         this.firstNameCreateAccountLabel = page.locator(FORM_ACTION_URLS.CREATE_ACCOUNT).locator('label').filter({ hasText: 'First name' });
         this.lastNameCreateAccountLabel = page.locator(FORM_ACTION_URLS.CREATE_ACCOUNT).locator('label').filter({ hasText: 'Last name' });
         this.usernameCreateAccountLabel = page.locator(FORM_ACTION_URLS.CREATE_ACCOUNT).locator('label').filter({ hasText: 'Username' });
-        this.newPasswordCreateAccountLabel = page.locator(FORM_ACTION_URLS.CREATE_ACCOUNT).locator('label').filter({ hasText: 'Password' });
+        this.passwordCreateAccountLabel = page.locator(FORM_ACTION_URLS.CREATE_ACCOUNT).locator('label').filter({ hasText: 'Password' });
         this.roleCreateAccountSelectOption = page.locator('#role');
         this.adminRowManageAccount = page.locator('#admins tr');
     }
@@ -78,11 +78,23 @@ export class AdminDashBoard extends BasePage {
         await expect(this.firstNameCreateAccountLabel).toBeVisible();
     }
 
+    async expectLastNameCreateAccountLabelVisible(): Promise<void> {
+        await expect(this.lastNameCreateAccountLabel).toBeVisible();
+    }
+
+    async expectUsernameCreateAccountLabelVisible(): Promise<void> {
+        await expect(this.usernameCreateAccountLabel).toBeVisible();
+    }
+
+    async expectPasswordCreateAccountLabelVisible(): Promise<void> {
+        await expect(this.passwordCreateAccountLabel).toBeVisible();
+    }
+
     async createAccountForm(firstName: string, lastName: string, username: string, newPassword: string, role: string): Promise<void> {
         await this.firstNameCreateAccountLabel.fill(firstName);
         await this.lastNameCreateAccountLabel.fill(lastName);
         await this.usernameCreateAccountLabel.fill(username);
-        await this.newPasswordCreateAccountLabel.fill(newPassword);
+        await this.passwordCreateAccountLabel.fill(newPassword);
         await this.roleCreateAccountSelectOption.selectOption(role);
         await this.createButton.click();
     }
@@ -91,5 +103,12 @@ export class AdminDashBoard extends BasePage {
         const adminUserRow = this.adminRowManageAccount.filter({ hasText: username });
         await expect(adminUserRow).toBeVisible();
         await expect(adminUserRow).toContainText(name);
+    }
+
+    async deleteAdminUser(username: string): Promise<void> {
+        const adminUserRow = this.adminRowManageAccount.filter({ hasText: username });
+        await expect(adminUserRow).toBeVisible();
+        await adminUserRow.getByRole('button', { name: 'Delete' }).click();
+        await expect(adminUserRow).not.toBeVisible();
     }
 }
