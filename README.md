@@ -1,5 +1,9 @@
 # School Management System – Playwright Test Automation
 
+Sample Test Automation Run
+
+https://github.com/user-attachments/assets/cb07e8ca-f823-4e13-af36-7ae0821aec51
+
 ## 1. Name and Short Description of the Project
 
 **School Management System – Playwright Test Automation** is an automated testing project for the School Management System web application.
