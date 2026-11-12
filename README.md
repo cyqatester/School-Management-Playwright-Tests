@@ -1,8 +1,10 @@
 # School Management System – Playwright Test Automation
 
-Sample Test Automation Run
-
-https://github.com/user-attachments/assets/cb07e8ca-f823-4e13-af36-7ae0821aec51
+<p>
+<picture>
+  <img width="1280" height="720" alt="School_Management_Playwright_Tests" src="https://github.com/user-attachments/assets/1462b4c2-b9e2-4662-8cb8-8e7f1aa3f8e4" />
+</picture>  
+</p>
 
 ## 1. Name and Short Description of the Project
 
